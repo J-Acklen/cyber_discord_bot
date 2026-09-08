@@ -1,0 +1,20 @@
+# Example systemd unit for running the bot directly on a Linux VPS (no Docker).
+# Copy to /etc/systemd/system/cyber-discord-bot.service, edit the paths/user,
+# then: sudo systemctl daemon-reload && sudo systemctl enable --now cyber-discord-bot
+
+[Unit]
+Description=UNG Cyber Unit Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=YOUR_LINUX_USER
+WorkingDirectory=/opt/cyber_discord_bot
+ExecStart=/opt/cyber_discord_bot/.venv/bin/python bot.py
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/opt/cyber_discord_bot/.env
+
+[Install]
+WantedBy=multi-user.target
