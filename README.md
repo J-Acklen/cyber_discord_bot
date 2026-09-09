@@ -104,6 +104,18 @@ Example: `/rolelink add trigger_role:S-1 linked_role:Staff Officer`.
 **CTF tracker**: `/ctf add` `/ctf remove` (staff only), `/ctf list`
 `/ctf submit` `/ctf scoreboard` (everyone).
 
+**Roll call / accountability** (staff only to start/report/close):
+`/rollcall start title:<text> [required_role]` posts an embed members react
+to with ✅ (present) or 🟡 (excused). `/rollcall report id:<n>` lists who
+checked in, and - if `required_role` was set - who from that role hasn't
+responded at all. `/rollcall close id:<n>` stops new reactions from
+counting. `/rollcall list` shows recent roll call IDs.
+
+**Resource library** (everyone can add/search/list; staff only to remove):
+`/resource add title: url: category:` adds a link to a shared, searchable
+catalog of tools, writeups, and practice rooms. `/resource search query:`
+and `/resource list [category]` browse it; `/resource remove id:` cleans it up.
+
 "Staff only" means the user has Discord's Manage Server permission, or holds
 the role configured as `ADMIN_ROLE_ID`.
 
@@ -117,5 +129,7 @@ cogs/moderation.py   kick/ban/timeout/warn/purge
 cogs/utility.py      ping/userinfo/serverinfo/roleinfo/avatar
 cogs/autorole.py     linked-role config + on_member_update listener
 cogs/ctf.py          challenge CRUD, flag submission, scoreboard
+cogs/rollcall.py     reaction-based check-ins + missing-member reports
+cogs/resources.py    shared, searchable link/tool/writeup catalog
 data/bot.sqlite3     created automatically on first run
 ```

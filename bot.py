@@ -28,6 +28,8 @@ COGS = [
     "cogs.utility",
     "cogs.autorole",
     "cogs.ctf",
+    "cogs.rollcall",
+    "cogs.resources",
 ]
 
 

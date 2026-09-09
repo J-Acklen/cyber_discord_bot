@@ -41,6 +41,36 @@ CREATE TABLE IF NOT EXISTS ctf_solves (
     solved_at TEXT NOT NULL DEFAULT (datetime('now')),
     PRIMARY KEY (challenge_id, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS rollcalls (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id INTEGER NOT NULL,
+    channel_id INTEGER NOT NULL,
+    message_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    required_role_id INTEGER,
+    created_by INTEGER NOT NULL,
+    is_open INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS rollcall_responses (
+    rollcall_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    responded_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (rollcall_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS resources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    category TEXT NOT NULL,
+    added_by INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 
