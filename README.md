@@ -121,10 +121,14 @@ catalog of tools, writeups, and practice rooms. `/resource search query:`
 and `/resource list [category]` browse it; `/resource remove id:` cleans it up.
 
 **pwn.college progress tracking** (everyone): `/pwn link username:` starts
-linking a pwn.college account - the bot gives a one-time code to place in
-your pwn.college **Affiliation** field (Account Settings), proving you own
-that account without ever handling a password or API token. `/pwn verify`
-confirms it. `/pwn progress [member]` shows Linux Luminarium module-by-module
+linking a pwn.college account - the bot gives a one-time code (a placeholder
+URL) to place in your pwn.college **Website** field (Account Settings),
+proving you own that account without ever handling a password or API token.
+Website is used instead of Affiliation because it only appears in a hover
+tooltip/link on your profile, not as visible page text - Affiliation works
+too if you'd rather use that, but it *is* shown as plain text to anyone
+viewing your profile. `/pwn verify` confirms it. `/pwn progress [member]`
+shows Linux Luminarium module-by-module
 completion for yourself or another linked member, and auto-grants the role
 configured as `PWNCOLLEGE_COMPLETION_ROLE_ID` the moment all required
 challenges are solved (also checked automatically every 6 hours in the

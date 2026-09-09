@@ -1,8 +1,9 @@
 """pwn.college account linking: members prove ownership of a pwn.college
-account via a one-time code placed in their public "Affiliation" profile
-field, then the bot tracks their Linux Luminarium module progress against
-pwn.college's public, unauthenticated JSON API and auto-grants a Discord
-role on full completion.
+account via a one-time code placed in their public profile (Website field
+recommended - it only shows up in a hover tooltip/link href, not as visible
+page text, unlike Affiliation), then the bot tracks their Linux Luminarium
+module progress against pwn.college's public, unauthenticated JSON API and
+auto-grants a Discord role on full completion.
 
 No pwn.college credentials are ever requested or stored - only a public
 username and what pwn.college already publishes for anyone to see at
@@ -11,7 +12,6 @@ https://pwn.college/hacker/<username>.
 
 import logging
 import os
-import re
 import secrets
 import time
 
@@ -30,8 +30,6 @@ COMPLETION_ROLE_ID = os.getenv("PWNCOLLEGE_COMPLETION_ROLE_ID")
 USER_AGENT = "UNG-Cyber-Unit-Discord-Bot/1.0 (+https://github.com/J-Acklen/cyber_discord_bot)"
 REQUEST_TIMEOUT = aiohttp.ClientTimeout(total=10)
 MODULES_CACHE_TTL = 3600  # dojo structure barely changes; refetch at most hourly
-
-AFFILIATION_RE = re.compile(r'<span class="badge badge-primary">\s*([^<]+?)\s*</span>')
 
 
 class PwnCollegeError(Exception):
@@ -93,7 +91,10 @@ class PwnCollege(commands.Cog):
 
         return data.get("solves", [])
 
-    async def _get_affiliation(self, username: str) -> str | None:
+    async def _profile_contains(self, username: str, code: str) -> bool:
+        """Fetches the user's public profile page and checks whether `code` appears anywhere
+        in it. Deliberately field-agnostic: the code can go in Website, Affiliation, or any
+        other public profile text - we don't care where, just that they control the page."""
         try:
             async with self.session.get(f"{BASE_URL}/hacker/{username}") as resp:
                 if resp.status == 404:
@@ -107,8 +108,7 @@ class PwnCollege(commands.Cog):
         except aiohttp.ClientError as e:
             raise PwnCollegeError("Couldn't reach pwn.college right now - try again later.") from e
 
-        match = AFFILIATION_RE.search(html)
-        return match.group(1).strip() if match else None
+        return code in html
 
     async def _compute_progress(self, username: str) -> tuple[list[dict], int, int]:
         """Returns (per_module_progress, overall_solved, overall_total)."""
@@ -153,7 +153,7 @@ class PwnCollege(commands.Cog):
     @pwn_group.command(name="link", description="Start linking your pwn.college account.")
     @app_commands.describe(username="Your pwn.college username")
     async def pwn_link(self, interaction: discord.Interaction, username: str):
-        code = f"cyberunit-{secrets.token_hex(3)}"
+        code = f"https://verify.cyberunit.link/{secrets.token_hex(4)}"
         db = self.bot.db
         await db.execute(
             "INSERT INTO pwncollege_links (guild_id, user_id, username, verify_code) VALUES (?, ?, ?, ?) "
@@ -165,9 +165,12 @@ class PwnCollege(commands.Cog):
 
         await interaction.response.send_message(
             "**Step 1:** Go to your pwn.college profile settings (https://pwn.college/settings#profile)\n"
-            f"**Step 2:** Set your **Affiliation** field to exactly: `{code}`\n"
+            f"**Step 2:** Set your **Website** field to exactly: `{code}`\n"
+            "(This only shows up as a small link icon on your profile, not as visible text - "
+            "nobody will see anything odd. If you'd rather use a different field, "
+            "**Affiliation** works too, but that one *is* shown as visible text on your profile.)\n"
             "**Step 3:** Save, then run `/pwn verify` here.\n"
-            "You can change your affiliation back to anything you like once verified.",
+            "You can change it back to your real website (or clear it) once verified.",
             ephemeral=True,
         )
 
@@ -189,15 +192,15 @@ class PwnCollege(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         try:
-            affiliation = await self._get_affiliation(row["username"])
+            found = await self._profile_contains(row["username"], row["verify_code"])
         except PwnCollegeError as e:
             await interaction.followup.send(str(e), ephemeral=True)
             return
 
-        if affiliation != row["verify_code"]:
+        if not found:
             await interaction.followup.send(
-                f"Didn't find the code yet - double check your Affiliation field is set to exactly "
-                f"`{row['verify_code']}` and saved, then try again.",
+                f"Didn't find the code yet - double check your Website (or Affiliation) field is set to "
+                f"exactly `{row['verify_code']}` and saved, then try again.",
                 ephemeral=True,
             )
             return
