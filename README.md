@@ -120,6 +120,18 @@ counting. `/rollcall list` shows recent roll call IDs.
 catalog of tools, writeups, and practice rooms. `/resource search query:`
 and `/resource list [category]` browse it; `/resource remove id:` cleans it up.
 
+**pwn.college progress tracking** (everyone): `/pwn link username:` starts
+linking a pwn.college account - the bot gives a one-time code to place in
+your pwn.college **Affiliation** field (Account Settings), proving you own
+that account without ever handling a password or API token. `/pwn verify`
+confirms it. `/pwn progress [member]` shows Linux Luminarium module-by-module
+completion for yourself or another linked member, and auto-grants the role
+configured as `PWNCOLLEGE_COMPLETION_ROLE_ID` the moment all required
+challenges are solved (also checked automatically every 6 hours in the
+background, so completing the dojo doesn't require re-running the command).
+`/pwn unlink` removes your link. All progress data comes from pwn.college's
+own public, unauthenticated API - no credentials are ever requested.
+
 "Staff only" means the user has Discord's Manage Server permission, or holds
 the role configured as `ADMIN_ROLE_ID`.
 
@@ -135,6 +147,7 @@ cogs/autorole.py     linked-role config + on_member_update listener
 cogs/ctf.py          challenge CRUD, flag submission, scoreboard
 cogs/rollcall.py     reaction-based check-ins + missing-member reports
 cogs/resources.py    shared, searchable link/tool/writeup catalog
+cogs/pwncollege.py   pwn.college account linking + Linux Luminarium progress
 data/bot.sqlite3     created automatically on first run
 ```
 

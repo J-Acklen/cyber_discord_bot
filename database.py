@@ -71,6 +71,18 @@ CREATE TABLE IF NOT EXISTS resources (
     added_by INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS pwncollege_links (
+    guild_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    verify_code TEXT NOT NULL,
+    verified INTEGER NOT NULL DEFAULT 0,
+    role_granted INTEGER NOT NULL DEFAULT 0,
+    linked_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (guild_id, user_id)
+);
 """
 
 

@@ -30,6 +30,7 @@ COGS = [
     "cogs.ctf",
     "cogs.rollcall",
     "cogs.resources",
+    "cogs.pwncollege",
 ]
 
 
