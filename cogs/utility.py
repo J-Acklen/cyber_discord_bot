@@ -51,6 +51,42 @@ class Utility(commands.Cog):
         embed.set_image(url=member.display_avatar.url)
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="commands", description="List all available commands (visible only to you).")
+    async def commands_list(self, interaction: discord.Interaction):
+        section_titles = {
+            "Moderation": "Moderation \U0001F6E1️",
+            "Utility": "Utility",
+            "AutoRole": "Role Linking",
+            "CTF": "CTF Tracker",
+            "RollCall": "Roll Call",
+            "Resources": "Resource Library",
+        }
+
+        embed = discord.Embed(
+            title="Available Commands",
+            description="\U0001F512 = staff only (Manage Server permission or the configured staff role).",
+            color=discord.Color.blurple(),
+        )
+
+        for cog_name, cog in self.bot.cogs.items():
+            app_cmds = cog.get_app_commands()
+            if not app_cmds:
+                continue
+
+            lines = []
+            for cmd in app_cmds:
+                if isinstance(cmd, app_commands.Group):
+                    for sub in cmd.commands:
+                        lock = "\U0001F512 " if sub.checks else ""
+                        lines.append(f"{lock}`/{cmd.name} {sub.name}` - {sub.description}")
+                else:
+                    lock = "\U0001F512 " if cmd.checks else ""
+                    lines.append(f"{lock}`/{cmd.name}` - {cmd.description}")
+
+            embed.add_field(name=section_titles.get(cog_name, cog_name), value="\n".join(lines), inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Utility(bot))

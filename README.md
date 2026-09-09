@@ -94,6 +94,8 @@ python bot.py
 `/warn` `/warnings` `/clearwarnings` `/purge`
 
 **Utility** (everyone): `/ping` `/userinfo` `/serverinfo` `/roleinfo` `/avatar`
+`/commands` - lists every command, grouped by category, in a reply only you
+can see (🔒 marks staff-only ones).
 
 **Role linking** (staff only): `/rolelink add`, `/rolelink remove`,
 `/rolelink list` - configure "if a member gets role X, auto-give them role Y
