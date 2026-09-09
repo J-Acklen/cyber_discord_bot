@@ -70,7 +70,9 @@ async def on_ready():
 
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
-    if isinstance(error, discord.app_commands.CheckFailure):
+    if isinstance(error, discord.app_commands.CommandOnCooldown):
+        message = f"Slow down - try again in {error.retry_after:.1f}s."
+    elif isinstance(error, discord.app_commands.CheckFailure):
         message = str(error) or "You don't have permission to use this command."
     else:
         log.exception("Unhandled app command error", exc_info=error)

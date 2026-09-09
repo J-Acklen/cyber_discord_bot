@@ -104,7 +104,8 @@ mirrored automatically from one link.
 Example: `/rolelink add trigger_role:S-1 linked_role:Staff Officer`.
 
 **CTF tracker**: `/ctf add` `/ctf remove` (staff only), `/ctf list`
-`/ctf submit` `/ctf scoreboard` (everyone).
+`/ctf submit` `/ctf scoreboard` (everyone). `/ctf submit` is rate-limited to
+one attempt per 5 seconds per user to slow down flag brute-forcing.
 
 **Roll call / accountability** (staff only to start/report/close):
 `/rollcall start title:<text> [required_role]` posts an embed members react
@@ -135,3 +136,26 @@ cogs/rollcall.py     reaction-based check-ins + missing-member reports
 cogs/resources.py    shared, searchable link/tool/writeup catalog
 data/bot.sqlite3     created automatically on first run
 ```
+
+## Security posture
+
+Last audited 2026-09-09. Summary of what's in place, for future reference:
+
+- **No inbound network surface beyond SSH.** `docker-compose.yml` never
+  publishes container ports; a port scan of the public IP confirms only 22
+  responds.
+- **SQL injection**: every query is parameterized (`?` placeholders) - no
+  string-built SQL anywhere.
+- **Errors never leak to Discord**: the global handler logs full tracebacks
+  server-side, sends only a generic message to the user.
+- **Dependencies**: scanned with `pip-audit`, no known CVEs at time of audit
+  - worth re-running occasionally (`pip install pip-audit && pip-audit -r
+  requirements.txt`).
+- **Container runs as a non-root user** (not root), limiting blast radius if
+  a dependency or future code change were ever compromised.
+- **VM hardening**: fail2ban active on SSH, `PermitRootLogin no`,
+  `X11Forwarding no`, unattended security upgrades enabled, unused
+  `rpcbind` service disabled.
+- **`/ctf submit` is rate-limited** (1 per 5s per user) to slow down flag
+  brute-forcing. Flags are stored in plaintext in the DB by design choice -
+  the DB never leaves the VM and isn't exposed on any port.

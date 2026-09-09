@@ -68,6 +68,7 @@ class CTF(commands.Cog):
 
     @ctf_group.command(name="submit", description="Submit a flag for a challenge.")
     @app_commands.describe(name="Challenge name", flag="Your flag guess")
+    @app_commands.checks.cooldown(1, 5.0)  # 1 attempt per 5s per user, to slow down flag brute-forcing
     async def ctf_submit(self, interaction: discord.Interaction, name: str, flag: str):
         db = self.bot.db
         cursor = await db.execute(

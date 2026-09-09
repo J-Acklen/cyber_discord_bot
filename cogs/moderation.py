@@ -34,9 +34,9 @@ class Moderation(commands.Cog):
         await interaction.response.send_message(f"Unbanned user ID {user_id}.")
 
     @app_commands.command(name="timeout", description="Timeout (mute) a member for a number of minutes.")
-    @app_commands.describe(member="The member to timeout", minutes="Duration in minutes", reason="Why they're being timed out")
+    @app_commands.describe(member="The member to timeout", minutes="Duration in minutes (max 40320 = 28 days, Discord's limit)", reason="Why they're being timed out")
     @is_staff()
-    async def timeout(self, interaction: discord.Interaction, member: discord.Member, minutes: int, reason: str = "No reason provided"):
+    async def timeout(self, interaction: discord.Interaction, member: discord.Member, minutes: app_commands.Range[int, 1, 40320], reason: str = "No reason provided"):
         duration = discord.utils.utcnow() + timedelta(minutes=minutes)
         await member.timeout(duration, reason=f"{interaction.user}: {reason}")
         await interaction.response.send_message(f"Timed out {member.mention} for {minutes} minute(s). Reason: {reason}")
