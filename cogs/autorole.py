@@ -1,6 +1,7 @@
 """Linked roles: when a member is given a configured "trigger" role, the bot
 automatically adds the configured "linked" role too (e.g. giving someone
-"S-1" auto-grants "Staff Officer"). Configure links with /rolelink commands.
+"S-1" auto-grants "Staff Officer"), and taking the trigger role away removes
+the linked role again. Configure links with /rolelink commands.
 """
 
 import discord
@@ -17,11 +18,15 @@ class AutoRole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        added_roles = set(after.roles) - set(before.roles)
-        if not added_roles:
+        before_roles = set(before.roles)
+        after_roles = set(after.roles)
+        added_roles = after_roles - before_roles
+        removed_roles = before_roles - after_roles
+        if not added_roles and not removed_roles:
             return
 
         db = self.bot.db
+
         for role in added_roles:
             cursor = await db.execute(
                 "SELECT linked_role_id FROM role_links WHERE guild_id = ? AND trigger_role_id = ?",
@@ -33,8 +38,19 @@ class AutoRole(commands.Cog):
                 if linked_role and linked_role not in after.roles:
                     await after.add_roles(linked_role, reason=f"Auto-linked from role {role.name}")
 
-    @rolelink_group.command(name="add", description="When a member gets trigger_role, automatically also give them linked_role.")
-    @app_commands.describe(trigger_role="The role that triggers the assignment", linked_role="The role to auto-assign")
+        for role in removed_roles:
+            cursor = await db.execute(
+                "SELECT linked_role_id FROM role_links WHERE guild_id = ? AND trigger_role_id = ?",
+                (after.guild.id, role.id),
+            )
+            rows = await cursor.fetchall()
+            for row in rows:
+                linked_role = after.guild.get_role(row["linked_role_id"])
+                if linked_role and linked_role in after.roles:
+                    await after.remove_roles(linked_role, reason=f"Auto-unlinked: {role.name} was removed")
+
+    @rolelink_group.command(name="add", description="Mirror trigger_role onto linked_role: gaining it grants linked_role, losing it removes linked_role.")
+    @app_commands.describe(trigger_role="The role that triggers the assignment/removal", linked_role="The role to auto-assign/auto-remove")
     @is_staff()
     async def rolelink_add(self, interaction: discord.Interaction, trigger_role: discord.Role, linked_role: discord.Role):
         if trigger_role.id == linked_role.id:
@@ -48,7 +64,8 @@ class AutoRole(commands.Cog):
         )
         await db.commit()
         await interaction.response.send_message(
-            f"Members given {trigger_role.mention} will now also receive {linked_role.mention}."
+            f"Linked: gaining {trigger_role.mention} now also grants {linked_role.mention}, "
+            f"and losing {trigger_role.mention} now also removes {linked_role.mention}."
         )
 
     @rolelink_group.command(name="remove", description="Remove a role link.")

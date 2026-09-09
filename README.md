@@ -96,7 +96,9 @@ python bot.py
 **Utility** (everyone): `/ping` `/userinfo` `/serverinfo` `/roleinfo` `/avatar`
 
 **Role linking** (staff only): `/rolelink add`, `/rolelink remove`,
-`/rolelink list` - configure "if a member gets role X, auto-give them role Y".
+`/rolelink list` - configure "if a member gets role X, auto-give them role Y
+- and if role X is taken away, auto-remove role Y too." Both directions are
+mirrored automatically from one link.
 Example: `/rolelink add trigger_role:S-1 linked_role:Staff Officer`.
 
 **CTF tracker**: `/ctf add` `/ctf remove` (staff only), `/ctf list`
