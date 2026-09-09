@@ -113,7 +113,7 @@ checked in, and - if `required_role` was set - who from that role hasn't
 responded at all. `/rollcall close id:<n>` stops new reactions from
 counting. `/rollcall list` shows recent roll call IDs.
 
-**Resource library** (everyone can add/search/list; staff only to remove):
+**Resource library** (staff only to add/remove; everyone can search/list):
 `/resource add title: url: category:` adds a link to a shared, searchable
 catalog of tools, writeups, and practice rooms. `/resource search query:`
 and `/resource list [category]` browse it; `/resource remove id:` cleans it up.

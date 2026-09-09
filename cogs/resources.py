@@ -1,6 +1,6 @@
 """Resource library: a shared, searchable catalog of tools, writeups,
 TryHackMe/HTB rooms, and reference links the unit collects over time.
-Anyone can contribute; only staff can remove entries.
+Staff curate entries (add/remove); everyone can search and browse.
 """
 
 import discord
@@ -18,6 +18,7 @@ class Resources(commands.Cog):
 
     @resource_group.command(name="add", description="Add a link to the shared resource library.")
     @app_commands.describe(title="Short name for the resource", url="The link", category="e.g. web, crypto, forensics, tool, writeup")
+    @is_staff()
     async def resource_add(self, interaction: discord.Interaction, title: str, url: str, category: str):
         if not url.startswith(("http://", "https://")):
             await interaction.response.send_message("That doesn't look like a valid URL - include http(s)://", ephemeral=True)
