@@ -44,6 +44,30 @@ docker compose up -d --build
 Logs: `docker compose logs -f`. The bot restarts automatically on crash or
 server reboot (`restart: unless-stopped`). SQLite data persists in `./data`.
 
+**Redeploying after code changes:**
+
+```bash
+./deploy.sh
+```
+
+Pulls the latest commit, rebuilds the image, and restarts the container.
+
+**Backing up the database:** `data/bot.sqlite3` holds warnings, role links,
+and the CTF challenges/scoreboard. Back it up with:
+
+```bash
+./backup.sh
+```
+
+This makes a consistent snapshot (safe to run while the bot is up) into
+`~/backups`, keeping the 14 most recent copies. Requires the `sqlite3` CLI on
+the host (`sudo apt install sqlite3`). To run it automatically every night at
+3 AM, add this to `crontab -e`:
+
+```
+0 3 * * * /home/ubuntu/cyber_discord_bot/backup.sh >> /home/ubuntu/backups/backup.log 2>&1
+```
+
 ### Option B: Directly on a Linux VPS with systemd
 
 ```bash
