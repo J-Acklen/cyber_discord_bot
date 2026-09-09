@@ -153,7 +153,7 @@ class PwnCollege(commands.Cog):
     @pwn_group.command(name="link", description="Start linking your pwn.college account.")
     @app_commands.describe(username="Your pwn.college username")
     async def pwn_link(self, interaction: discord.Interaction, username: str):
-        code = f"https://verify.cyberunit.link/{secrets.token_hex(4)}"
+        code = f"https://ungcyberunit.org/verify/{secrets.token_hex(4)}"
         db = self.bot.db
         await db.execute(
             "INSERT INTO pwncollege_links (guild_id, user_id, username, verify_code) VALUES (?, ?, ?, ?) "
