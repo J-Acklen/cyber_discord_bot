@@ -103,9 +103,10 @@ can see (🔒 marks staff-only ones).
 mirrored automatically from one link.
 Example: `/rolelink add trigger_role:S-1 linked_role:Staff Officer`.
 
-**CTF tracker**: `/ctf add` `/ctf remove` (staff only), `/ctf list`
-`/ctf submit` `/ctf scoreboard` (everyone). `/ctf submit` is rate-limited to
-one attempt per 5 seconds per user to slow down flag brute-forcing.
+**CTF tracker**: `/ctf add` `/ctf remove` (staff, or anyone holding the role
+configured as `CTF_ADMIN_ROLE_ID`), `/ctf list` `/ctf submit` `/ctf
+scoreboard` (everyone). `/ctf submit` is rate-limited to one attempt per 5
+seconds per user to slow down flag brute-forcing.
 
 **Roll call / accountability** (staff only to start/report/close):
 `/rollcall start title:<text> [required_role]` posts an embed members react

@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .checks import is_staff
+from .checks import is_ctf_admin
 
 
 class CTF(commands.Cog):
@@ -17,7 +17,7 @@ class CTF(commands.Cog):
 
     @ctf_group.command(name="add", description="Add a new CTF challenge.")
     @app_commands.describe(name="Challenge name", category="Category (e.g. web, crypto, pwn)", points="Points awarded", flag="The exact flag string")
-    @is_staff()
+    @is_ctf_admin()
     async def ctf_add(self, interaction: discord.Interaction, name: str, category: str, points: int, flag: str):
         db = self.bot.db
         try:
@@ -33,7 +33,7 @@ class CTF(commands.Cog):
 
     @ctf_group.command(name="remove", description="Remove a CTF challenge.")
     @app_commands.describe(name="Challenge name to remove")
-    @is_staff()
+    @is_ctf_admin()
     async def ctf_remove(self, interaction: discord.Interaction, name: str):
         db = self.bot.db
         cursor = await db.execute(
