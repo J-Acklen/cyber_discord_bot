@@ -122,8 +122,12 @@ and `/resource list [category]` browse it; `/resource remove id:` cleans it up.
 
 **pwn.college progress tracking** (everyone): `/pwn link username:` starts
 linking a pwn.college account - the bot gives a one-time code (a placeholder
-URL) to place in your pwn.college **Website** field (Account Settings),
-proving you own that account without ever handling a password or API token.
+URL of the form `https://ungcyberunit.org/verify/<code>`) to place in your
+pwn.college **Website** field (Account Settings), proving you own that
+account without ever handling a password or API token. The bot never visits
+that URL - it only checks pwn.college for the string - but it now resolves
+to a live page on the club site that explains what the link is, so anyone
+who clicks it out of curiosity lands somewhere legitimate instead of a 404.
 Website is used instead of Affiliation because it only appears in a hover
 tooltip/link on your profile, not as visible page text - Affiliation works
 too if you'd rather use that, but it *is* shown as plain text to anyone
