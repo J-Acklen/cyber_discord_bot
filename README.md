@@ -181,3 +181,15 @@ Last audited 2026-09-09. Summary of what's in place, for future reference:
 - **`/ctf submit` is rate-limited** (1 per 5s per user) to slow down flag
   brute-forcing. Flags are stored in plaintext in the DB by design choice -
   the DB never leaves the VM and isn't exposed on any port.
+
+## Future improvements
+
+- **Hack The Box account linking/progress tracking** (mirroring the
+  pwn.college integration) - investigated and parked as of 2026-09-13.
+  Unlike pwn.college, HTB has no public API: personal-account API tokens
+  are Enterprise-only ($250+/seat/month, or a university discount requiring
+  a faculty PO), and session-cookie-based scraping is explicitly banned by
+  HTB's Acceptable Use Policy (Section 6.1 - "No automated access"), with
+  real account-ban risk. Worth revisiting only if HTB opens up personal-
+  account API access, or the club ends up with an Enterprise subscription
+  for other reasons.
